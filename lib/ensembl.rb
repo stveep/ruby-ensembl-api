@@ -10,7 +10,7 @@
 # @author Francesco Strozzi
 
 module Ensembl
-  ENSEMBL_RELEASE = 60
+  ENSEMBL_RELEASE = 79 
   
   class Session
     attr_accessor :coord_systems

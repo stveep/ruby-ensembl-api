@@ -16,7 +16,7 @@ module Ensembl
   DB_HOST = 'ensembldb.ensembl.org'
   DB_USERNAME = 'anonymous'
   DB_PASSWORD = ''
-  EG_HOST = 'mysql.ebi.ac.uk'
+  EG_HOST = 'mysql-eg-publicsql.ebi.ac.uk'
   EG_PORT = 4157
 
 

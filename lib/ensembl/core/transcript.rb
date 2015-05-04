@@ -72,8 +72,8 @@ module Ensembl
     class Transcript < DBConnection
       include Sliceable
 
-      set_table_name 'transcript'
-      set_primary_key 'transcript_id'
+      self.table_name = 'transcript'
+      self.primary_key = 'transcript_id'
 
       belongs_to :gene
       belongs_to :seq_region
@@ -81,16 +81,16 @@ module Ensembl
       has_many :transcript_attribs
       
       has_many :exon_transcripts
-      has_many :exons, :through => :exon_transcripts, :order => "exon_transcript.rank"
+      has_many :exons, -> { order "exon_transcript.rank" }, :through => :exon_transcripts
 
       has_one :translation
       
-      has_many :object_xrefs, :foreign_key => 'ensembl_id', :conditions => "ensembl_object_type = 'Transcript'"
+      has_many :object_xrefs, -> { where(ensembl_object_type: 'Transcript') }, :foreign_key => 'ensembl_id'
       has_many :xrefs, :through => :object_xrefs
 
       has_many :transcript_supporting_features
-      has_many :dna_align_features, :through => :transcript_supporting_features, :conditions => ["feature_type = 'dna_align_feature'"]
-      has_many :protein_align_features, :through => :transcript_supporting_features, :conditions => ["feature_type = 'protein_align_feature'"]
+      has_many :dna_align_features, -> { where(feature_type: 'dna_align_feature') }, :through => :transcript_supporting_features
+      has_many :protein_align_features, -> { where(feature_type: 'protein_align_feature') }, :through => :transcript_supporting_features
 
       alias attribs transcript_attribs
 
