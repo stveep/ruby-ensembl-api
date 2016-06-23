@@ -80,10 +80,11 @@ module Ensembl
           else
             species_id = Collection.get_species_id(species)
             raise ArgumentError, "No species found in the database with this name: #{species}" if species_id.nil? 
-            all_coord_systems = Ensembl::Core::CoordSystem.find_all_by_name_and_species_id(coord_system_name,species_id)
+           # all_coord_systems = Ensembl::Core::CoordSystem.find_all_by_name_and_species_id(coord_system_name,species_id)
+            all_coord_systems = Ensembl::Core::CoordSystem.where(name: coord_system_name,species_id: species_id)
           end
         else
-          all_coord_systems = Ensembl::Core::CoordSystem.find_all_by_name(coord_system_name)
+          all_coord_systems = Ensembl::Core::CoordSystem.where(name: coord_system_name)
         end
       	coord_system = nil
         if version.nil? # Take the version with the lower rank
@@ -442,7 +443,7 @@ module Ensembl
         if Collection.check
           coord_system_ids_with_features = Collection.find_all_coord_by_table_name(table_name,self.seq_region.coord_system.species_id).collect{|mc| mc.coord_system_id}
         else
-          coord_system_ids_with_features = MetaCoord.find_all_by_table_name(table_name).collect{|mc| mc.coord_system_id}
+          coord_system_ids_with_features = MetaCoord.where(table_name: table_name).collect{|mc| mc.coord_system_id}
         end  
         # Get the features of the original slice
         if coord_system_ids_with_features.include?(self.seq_region.coord_system_id)

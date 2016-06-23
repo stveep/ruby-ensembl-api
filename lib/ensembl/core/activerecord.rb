@@ -1026,13 +1026,16 @@ module Ensembl
     #
     # @example
     #  puts Gene.find_by_biotype('protein_coding').length
+    #
+    #
+    #  Breaks in release > 66 as the GeneStableId table no longer exists
     class Gene < DBConnection
       include Sliceable
 
       self.primary_key = 'gene_id'
 
       belongs_to :seq_region
-      has_one :gene_stable_id
+    #  has_one :gene_stable_id
 
       has_many :gene_attribs
       has_many :attrib_types, :through => :gene_attrib
@@ -1048,10 +1051,11 @@ module Ensembl
 
       # The Gene#stable_id method returns the stable_id of the gene (i.e. the
       # ENSG id).
-      def stable_id
-        return self.gene_stable_id.stable_id
-      	
-      end
+      # Calling stable_id returns this directly - no need for this method (no separate GeneStableId table in release >66)
+#      def stable_id
+#        return self.gene_stable_id.stable_id
+#      	
+#      end
 
       # The Gene#display_label method returns the default name of the gene.
       def display_label
@@ -1092,13 +1096,18 @@ module Ensembl
       # not found, it returns nil.
       def self.find_by_stable_id(stable_id)
         result = nil
-        if stable_id.kind_of? Array
-          gene_stable_ids = GeneStableId.where({:stable_id => stable_id})
-          result = (gene_stable_ids.size == 0) ? nil : gene_stable_ids.map {|id| id.gene}
-        else
-          gene_stable_id = GeneStableId.find_by_stable_id(stable_id)
-          result = (gene_stable_id.nil?) ? nil : gene_stable_id.gene
-        end
+#        if stable_id.kind_of? Array
+#          gene_stable_ids = GeneStableId.where({:stable_id => stable_id})
+#          Finds genes directly, not via stable IDs table:
+          genes = Gene.where(stable_id: stable_id)
+	  result = (genes.size == 0) ? nil : genes
+	  # Return Gene object if only one result
+	  result = (genes.size == 1) ? genes[0] : genes
+#          result = (gene_stable_ids.size == 0) ? nil : gene_stable_ids.map {|id| id.gene}
+#        else
+#          gene_stable_id = GeneStableId.find_by_stable_id(stable_id)
+#          result = (gene_stable_id.nil?) ? nil : gene_stable_id.gene
+#        end
         return result
       end
       

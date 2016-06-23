@@ -84,7 +84,7 @@ module Ensembl
       end
       
       def transcript_variations
-        tvs = TranscriptVariation.find_all_by_variation_feature_id(self.variation_feature_id)
+        tvs = TranscriptVariation.where(variation_feature_id: self.variation_feature_id)
         if tvs[0].nil? then # the variation is not stored in the database, so run the calculations
           sr = core_connection(self.seq_region_id)
           return custom_transcript_variation(self,sr)

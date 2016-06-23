@@ -29,7 +29,9 @@ module Ensembl
       # 
       # @return [Array<String>] Array containing species names in colleciton
       def self.species()
-        return Meta.find_all_by_meta_key("species.db_name").collect {|m| m.meta_value}
+      # syntax for older activerecord versions
+      # return Meta.find_by(meta_key: "species.db_name").map{|m| m.meta_value}
+        return Meta.where(meta_key: "species.db_name").map{|m| m.meta_value}
       end
       
       # Returns the species_id of a particular species present in the database.
@@ -53,8 +55,9 @@ module Ensembl
       # @param [Integer] species_id ID of species in the database
       # @return [Array<Integer>] Array containing coord_system IDs.
       def self.find_all_coord_by_table_name(table_name,species_id)
-        all_ids = CoordSystem.find_all_by_species_id(species_id)
-        return MetaCoord.find_all_by_coord_system_id_and_table_name(all_ids,table_name)
+        all_ids = CoordSystem.where(species_id: species_id)
+       # return MetaCoord.find_by_id_and_table_name(all_ids,table_name)
+        return MetaCoord.where(coord_system_id: all_ids, table_name: table_name)
       end
       
     end
